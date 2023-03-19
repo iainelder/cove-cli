@@ -1,13 +1,14 @@
-from itertools import chain
-from botocove import cove, CoveOutput
-from datetime import datetime
-from typing import Any, TextIO
-import sys
-import jsonlines
 import json
+import sys
+from datetime import datetime
+from itertools import chain
+from typing import Any, TextIO
+
+import jsonlines
+from botocove import CoveOutput, cove  # type: ignore[import]
 
 
-def main():
+def main() -> None:
     # TODO: Accept function as input à la sqlite-utils.
     org_func = cove(lambda s: None)
     write_jsonlines(org_func())
@@ -37,7 +38,7 @@ def write_jsonlines(
     writer.write_all(account_regions)
 
 
-def _iter_errors_then_results(cove_output):
+def _iter_errors_then_results(cove_output: Any) -> Any:
     """
     Returns an iterator over each account-region. First role failures, then
     exceptions, then results.
