@@ -5,6 +5,9 @@ description = ""
 authors = ["Iain Samuel McLean Elder <iain@isme.es>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+cove_cli = "cove_cli.cove_cli:main"
+
 [tool.poetry.dependencies]
 python = "^3.8"
 botocove = "^1.7.1"
@@ -17,6 +20,7 @@ pytest = "^7.2.2"
 flakeheaven = "^3.2.1"
 mypy = "^1.1.1"
 moto = "^4.1.4"
+cli-test-helpers = "^3.2.0"
 
 [build-system]
 requires = ["poetry-core"]

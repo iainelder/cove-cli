@@ -645,6 +645,18 @@ files = [
 ]
 
 [[package]]
+name = "cli-test-helpers"
+version = "3.2.0"
+description = "Useful helpers for writing tests for your Python CLI program."
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "cli-test-helpers-3.2.0.tar.gz", hash = "sha256:9c3bdfc4faae4a7340ef02321152f36ebc2012525acfb7272451c688b88a25e9"},
+    {file = "cli_test_helpers-3.2.0-py3-none-any.whl", hash = "sha256:414fa232239c6733e8843fae653b5e10bb489cf875be94e029819755194baf17"},
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 description = "Cross-platform colored terminal text."
@@ -1576,4 +1588,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "aa47ddd1eb5993b39a2ab8a36edb5a6534231736094770a304cd64a79baa790b"
+content-hash = "85fac527f6bf7f6f0fb220ac0e3d19c858d70d05b2b3c0d9fa6d7a29319c2306"

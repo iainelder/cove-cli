@@ -1,5 +1,6 @@
 import json
 import sys
+from argparse import ArgumentParser
 from datetime import datetime
 from itertools import chain
 from typing import Any, TextIO
@@ -9,15 +10,21 @@ from botocove import CoveOutput, cove  # type: ignore[import]
 
 
 def main() -> None:
+    _ = get_parser().parse_args()
+    cove_to_file()
+
+
+def get_parser() -> ArgumentParser:
+    return ArgumentParser("cove_cli")
+
+
+def cove_to_file(outfile: TextIO = sys.stdout) -> None:
     # TODO: Accept function as input à la sqlite-utils.
     org_func = cove(lambda s: None)
-    write_jsonlines(org_func())
+    write_jsonlines(org_func(), outfile)
 
 
-def write_jsonlines(
-    cove_output: CoveOutput,
-    outfile: TextIO = sys.stdout,
-) -> None:
+def write_jsonlines(cove_output: CoveOutput, outfile: TextIO) -> None:
     """
     Writes each account-region result as a JSON line.
     """
