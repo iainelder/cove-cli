@@ -9,18 +9,28 @@ import jsonlines
 from botocove import CoveOutput, cove  # type: ignore[import]
 
 
+class Arguments:
+    code: str
+
+
 def main() -> None:
-    _ = get_parser().parse_args()
-    cove_to_file()
+    args = parse_args()
+    cove_to_file(args.code, sys.stdout)
 
 
-def get_parser() -> ArgumentParser:
-    return ArgumentParser("cove_cli")
+def parse_args() -> Arguments:
+    parser = ArgumentParser("cove_cli")
+    parser.add_argument("code", type=str, default="", nargs="?")
+    return parser.parse_args(namespace=Arguments())
 
 
-def cove_to_file(outfile: TextIO = sys.stdout) -> None:
-    # TODO: Accept function as input à la sqlite-utils.
-    org_func = cove(lambda s: None)
+def cove_to_file(code: str, outfile: TextIO) -> None:
+    def func():
+        if not code:
+            return None
+        return eval(code, globals(), locals())
+
+    org_func = cove(func)
     write_jsonlines(org_func(), outfile)
 
 
