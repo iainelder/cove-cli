@@ -10,12 +10,12 @@ from cove_cli.cove_cli import cove_to_file, main
 from tests.moto_mock_org.moto_models import SmallOrg
 
 
-def test_cli_runs_as_module():
+def test_cli_runs_as_module() -> None:
     result = shell("python -m cove_cli --help")
     assert result.exit_code == 0
 
 
-def test_cli_runs_as_command():
+def test_cli_runs_as_command() -> None:
     result = shell("cove_cli --help")
     assert result.exit_code == 0
 

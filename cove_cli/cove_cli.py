@@ -25,7 +25,14 @@ def parse_args() -> Arguments:
 
 
 def cove_to_file(code: str, outfile: TextIO) -> None:
-    def func():
+    """
+    Evaluates a Python expression with CoveSession `s` in each organization
+    account-region.
+
+    Prints each account-region output as a JSON line.
+    """
+
+    def func() -> Any:
         if not code:
             return None
         return eval(code, globals(), locals())
