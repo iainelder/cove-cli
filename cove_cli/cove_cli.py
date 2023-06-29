@@ -6,7 +6,7 @@ from itertools import chain
 from typing import Any, TextIO
 
 import jsonlines
-from botocove import CoveOutput, cove  # type: ignore[import]
+from botocove import CoveOutput, CoveSession, cove  # type: ignore[import]
 
 
 class Arguments:
@@ -32,7 +32,7 @@ def cove_to_file(code: str, outfile: TextIO) -> None:
     Prints each account-region output as a JSON line.
     """
 
-    def func() -> Any:
+    def func(s: CoveSession) -> Any:
         if not code:
             return None
         return eval(code, globals(), locals())
