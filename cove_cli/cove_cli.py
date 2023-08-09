@@ -12,21 +12,23 @@ from botocove import CoveOutput, CoveSession, cove  # type: ignore[import]
 class Arguments:
     code: str
     regions: List[str]
+    target_ids: List[str]
 
 
 def main() -> None:
     args = parse_args()
-    cove_to_file(args.code, args.regions, sys.stdout)
+    cove_to_file(args, sys.stdout)
 
 
 def parse_args() -> Arguments:
     parser = ArgumentParser("cove_cli")
     parser.add_argument("--regions", type=str, nargs="+")
+    parser.add_argument("--target-ids", type=str, nargs="+")
     parser.add_argument("code", type=str, default="", nargs="?")
     return parser.parse_args(namespace=Arguments())
 
 
-def cove_to_file(code: str, regions: List[str], outfile: TextIO) -> None:
+def cove_to_file(args: Arguments, outfile: TextIO) -> None:
     """
     Evaluates a Python expression with CoveSession `s` in each organization
     account-region.
@@ -35,11 +37,11 @@ def cove_to_file(code: str, regions: List[str], outfile: TextIO) -> None:
     """
 
     def func(s: CoveSession) -> Any:
-        if not code:
+        if not args.code:
             return None
-        return eval(code, globals(), locals())
+        return eval(args.code, globals(), locals())
 
-    org_func = cove(func, regions=regions)
+    org_func = cove(func, regions=args.regions, target_ids=args.target_ids)
     write_jsonlines(org_func(), outfile)
 
 
