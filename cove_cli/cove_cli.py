@@ -3,7 +3,7 @@ import sys
 from argparse import ArgumentParser
 from datetime import datetime
 from itertools import chain
-from typing import Any, TextIO
+from typing import Any, List, TextIO
 
 import jsonlines
 from botocove import CoveOutput, CoveSession, cove  # type: ignore[import]
@@ -11,20 +11,22 @@ from botocove import CoveOutput, CoveSession, cove  # type: ignore[import]
 
 class Arguments:
     code: str
+    regions: List[str]
 
 
 def main() -> None:
     args = parse_args()
-    cove_to_file(args.code, sys.stdout)
+    cove_to_file(args.code, args.regions, sys.stdout)
 
 
 def parse_args() -> Arguments:
     parser = ArgumentParser("cove_cli")
+    parser.add_argument("--regions", type=str, nargs="+")
     parser.add_argument("code", type=str, default="", nargs="?")
     return parser.parse_args(namespace=Arguments())
 
 
-def cove_to_file(code: str, outfile: TextIO) -> None:
+def cove_to_file(code: str, regions: List[str], outfile: TextIO) -> None:
     """
     Evaluates a Python expression with CoveSession `s` in each organization
     account-region.
@@ -37,7 +39,7 @@ def cove_to_file(code: str, outfile: TextIO) -> None:
             return None
         return eval(code, globals(), locals())
 
-    org_func = cove(func)
+    org_func = cove(func, regions=regions)
     write_jsonlines(org_func(), outfile)
 
 
