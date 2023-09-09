@@ -35,6 +35,27 @@ poetry run cove_cli 's.client("iam").list_users()["Users"]' \
 {"Id":"333333333333","Name":"Test Account 3","UserName":"Test User C"}
 ```
 
+## Bootstrap AWS Config
+
+You may prefer [AWS Config](https://aws.amazon.com/config/) over cove_cli to query your inventory because it gives much faster results. But how do you know where AWS Config is enabled in the first place?
+
+List all the configuration recorders in the organization like this:
+
+```bash
+cove_cli \
+'s.client("config").describe_configuration_recorders()["ConfigurationRecorders"][0]' \
+| jq -c '{Id, Name, Result}'
+```
+
+The result is the name of the account regions's recorder. A null result means the account region has no recorder. In this example only 222222222222 eu-west-1 has a recorder.
+
+```json
+{"Id":"111111111111","Region":"eu-central-1","Result":null}
+{"Id":"111111111111","Region":"eu-west-1","Result":null}
+{"Id":"222222222222","Region":"eu-central-1","Result":null}
+{"Id":"222222222222","Region":"eu-west-1","Result":"default"}
+```
+
 ## Installation
 
 Until I package this and distribute it the normal way via PyPI, this is how I install it:
