@@ -39,12 +39,17 @@ poetry run cove_cli 's.client("iam").list_users()["Users"]' \
 
 You may prefer [AWS Config](https://aws.amazon.com/config/) over cove_cli to query your inventory because it gives much faster results. But how do you know where AWS Config is enabled in the first place?
 
-List all the configuration recorders in the organization like this:
+List all the configuration recorder names sorted by account region like this:
 
 ```bash
 cove_cli \
-'s.client("config").describe_configuration_recorders()["ConfigurationRecorders"][0]' \
-| jq -c '{Id, Name, Result}'
+'(
+    s.client("config").describe_configuration_recorders()
+    ["ConfigurationRecorders"][0]["name"]
+)' \
+--regions eu-west-1 eu-central-1 \
+--target-ids 482035687842 274835020608 \
+| jq -sc 'sort_by(.Id, .Region) | .[] | {Id, Region, Result}'
 ```
 
 The result is the name of the account regions's recorder. A null result means the account region has no recorder. In this example only 222222222222 eu-west-1 has a recorder.
