@@ -10,7 +10,7 @@ Pipe the output to any other CLI tool for further processing. For example, use [
 
 ```bash
 AWS_PROFILE=sandbox-mgmt \
-poetry run cove_cli 's.client("iam").list_users()["Users"]' \
+cove_cli 's.client("iam").list_users()["Users"]' \
 | jq -c '{Id, Name, Result: [.Result[].UserName]}'
 ```
 
@@ -24,7 +24,7 @@ Use jq to output one JSON line for each item in the result list and output one J
 
 ```bash
 AWS_PROFILE=sandbox-mgmt \
-poetry run cove_cli 's.client("iam").list_users()["Users"]' \
+cove_cli 's.client("iam").list_users()["Users"]' \
 | jq -c '{Id, Name} + {UserName: (.Result[].UserName // null)}'
 ```
 
@@ -33,32 +33,6 @@ poetry run cove_cli 's.client("iam").list_users()["Users"]' \
 {"Id":"111111111111","Name":"Test Account 1","UserName":"Test User B"}
 {"Id":"222222222222","Name":"Test Account 2","UserName":null}
 {"Id":"333333333333","Name":"Test Account 3","UserName":"Test User C"}
-```
-
-## Bootstrap AWS Config
-
-You may prefer [AWS Config](https://aws.amazon.com/config/) over cove_cli to query your inventory because it gives much faster results. But how do you know where AWS Config is enabled in the first place?
-
-List all the configuration recorder names sorted by account region like this:
-
-```bash
-cove_cli \
-'(
-    s.client("config").describe_configuration_recorders()
-    ["ConfigurationRecorders"][0]["name"]
-)' \
---regions eu-west-1 eu-central-1 \
---target-ids 482035687842 274835020608 \
-| jq -sc 'sort_by(.Id, .Region) | .[] | {Id, Region, Result}'
-```
-
-The result is the name of the account regions's recorder. A null result means the account region has no recorder. In this example only 222222222222 eu-west-1 has a recorder.
-
-```json
-{"Id":"111111111111","Region":"eu-central-1","Result":null}
-{"Id":"111111111111","Region":"eu-west-1","Result":null}
-{"Id":"222222222222","Region":"eu-central-1","Result":null}
-{"Id":"222222222222","Region":"eu-west-1","Result":"default"}
 ```
 
 ## Installation
@@ -96,4 +70,32 @@ optional arguments:
   -h, --help            show this help message and exit
   --regions REGIONS [REGIONS ...]
   --target-ids TARGET_IDS [TARGET_IDS ...]
+```
+
+## Examples
+
+### Bootstrap AWS Config
+
+You may prefer [AWS Config](https://aws.amazon.com/config/) over cove_cli to query your inventory because it gives much faster results. But how do you know where AWS Config is enabled in the first place?
+
+List all the configuration recorder names sorted by account region like this:
+
+```bash
+cove_cli \
+'(
+    s.client("config").describe_configuration_recorders()
+    ["ConfigurationRecorders"][0]["name"]
+)' \
+--regions eu-west-1 eu-central-1 \
+--target-ids 482035687842 274835020608 \
+| jq -sc 'sort_by(.Id, .Region) | .[] | {Id, Region, Result}'
+```
+
+The result is the name of the account regions's recorder. A null result means the account region has no recorder. In this example only 222222222222 eu-west-1 has a recorder.
+
+```json
+{"Id":"111111111111","Region":"eu-central-1","Result":null}
+{"Id":"111111111111","Region":"eu-west-1","Result":null}
+{"Id":"222222222222","Region":"eu-central-1","Result":null}
+{"Id":"222222222222","Region":"eu-west-1","Result":"default"}
 ```
